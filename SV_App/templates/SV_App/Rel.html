@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockVision</title>
+    <style>
+                /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #f5f5f5;
+        }
+
+        .logo img {
+            height: 50px;
+            margin-right: 15px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* Main Content Layout */
+        .main-content {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        /* Left Section */
+        .stock-buttons {
+            width: 20%;
+            padding: 10px;
+            background-color: #e9ecef;
+        }
+
+        .stock-buttons button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Center Section */
+        .stock-display {
+            width: 100%;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .stock-display h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .stock-display .graph, .stock-display .predicted-graph {
+            margin-top: 20px;
+            height: 200px;
+            background-color: #d1e7dd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .carousel {
+        width: 100%;
+        max-width: 950px;
+        overflow: hidden;
+        position: relative;
+        border-radius: 5px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .carousel-track {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-image {
+        min-width: 70%;
+        flex-shrink: 0;
+        object-fit: cover;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="logo">
+            <img src="{% static 'image/StockVision_Logo.png' %}" alt="StockVision Logo Logo">
+        </div>
+        <h1>Stock Vision</h1>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Center Section (Stock Data and Graphs) -->
+        <section class="stock-display"></section>
+    </div>  
+    <script>
+    function fetchAndDisplayStockData() {
+    fetch('/fetch-rel-data/') // The endpoint to fetch MRF data
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                const stockDisplay = document.querySelector('.stock-display');
+                const stockData = data.data;
+
+                // Dynamically update the content inside .stock-display
+                stockDisplay.innerHTML = `
+                    <h2>${stockData.Symbol} STOCK Data</h2>
+                    <p><strong>Current Price:</strong> ${stockData.Open}</p>
+                    <p><strong>High:</strong> ${stockData.High}</p>
+                    <p><strong>Low:</strong> ${stockData.Low}</p>
+                    <p><strong>Price Change:</strong> ${stockData["Price Change"]}</p>
+                    <p><strong>P/E Ratio:</strong> ${stockData["P/E Ratio"]}</p>
+                    <p><strong>Google Trends:</strong> ${stockData["Google Trends"]}</p>
+                    <p><strong>Predicted Price:</strong> ${stockData["Predicted Price"]}</p>
+                `;
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+
+// Automatically fetch and display stock data when the page loads
+document.addEventListener('DOMContentLoaded', fetchAndDisplayStockData);
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/fetch-rel-data/') // Fetch the MRF stock data when the page loads
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                const stockDisplay = document.querySelector('.stock-display');
+                const stockData = data.data;
+
+                // Dynamically update the content inside .stock-display
+                stockDisplay.innerHTML = `
+                    <h2>${stockData.Symbol} Data</h2>
+                    <p><strong>Current Price:</strong> ${stockData.Open}</p>
+                    <p><strong>High:</strong> ${stockData.High}</p>
+                    <p><strong>Low:</strong> ${stockData.Low}</p>
+                    <p><strong>Price Change:</strong> ${stockData["Price Change"]}</p>
+                    <p><strong>P/E Ratio:</strong> ${stockData["P/E Ratio"]}</p>
+                    <p><strong>Google Trends:</strong> ${stockData["Google Trends"]}</p>
+                    <p><strong>Predicted Price:</strong> ${stockData["Predicted Price"]}</p>
+                `;
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+});
+    </script>
+<section>
+    <img src="{% static 'image/RELIANCE.BO_graph.png' %}" alt="RELIANCE Graph" class="carousel-image">
+</section>
+</body>
+</html>
